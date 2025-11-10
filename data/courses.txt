@@ -1,2 +1,1 @@
 C001,Python Programming,3
-C002,Database Systems,3
