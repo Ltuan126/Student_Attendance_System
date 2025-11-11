@@ -1,12 +1,11 @@
- # 🧾 Student Attendance System (CLI Version)
+# 🧾 Student Attendance System (CLI Version)
 
-## 📌 1. Giới thiệu
-Hệ thống **Student Attendance System (SAS)** được phát triển để hỗ trợ việc **điểm danh và quản lý điểm danh** cho sinh viên và giảng viên.  
-Chương trình chạy bằng **Command Line Interface (CLI)**, lưu trữ dữ liệu bằng file `.txt`, không cần cơ sở dữ liệu.
+## 📌 1. Introduction
+The Student Attendance System (SAS) is developed to support attendance recording and management for students and lecturers. The application runs as a Command Line Interface (CLI) and stores data in plain `.txt` files — no database is required.
 
 ---
 
-## ⚙️ 2. Cấu trúc thư mục
+## ⚙️ 2. Project structure
 
 ```
 SAS_Project/
@@ -46,21 +45,21 @@ SAS_Project/
 
 ---
 
-## 👨‍💻 3. Cách chạy chương trình
+## 👨‍💻 3. How to run
 
-### 🔧 Yêu cầu môi trường
+### 🔧 Requirements
 - Python **>= 3.11**
-- Đã cài **pytest** (nếu muốn chạy test)
-- Hệ điều hành: Windows / macOS / Linux
+- `pytest` (optional, for running tests)
+- OS: Windows / macOS / Linux
 
-### 🚀 Chạy chương trình chính
+### 🚀 Run the application
 
-Mở terminal trong thư mục dự án và chạy:
+Open a terminal in the project folder and run:
 ```bash
 python main.py
 ```
 
-Sau khi khởi động, hệ thống sẽ hiển thị:
+On startup the program shows:
 ```
 ===========================
 Student Attendance System – CLI Version
@@ -70,7 +69,7 @@ Student Attendance System – CLI Version
 (0) Exit
 ```
 
-- Nếu đăng nhập là **Student**, vào menu:
+- If logged in as a **Student**, the menu contains:
   ```
   (1) View Timetable
   (2) Check-in Attendance
@@ -78,7 +77,7 @@ Student Attendance System – CLI Version
   (4) Request Attendance Correction
   (0) Logout
   ```
-- Nếu đăng nhập là **Lecturer**, vào menu:
+- If logged in as a **Lecturer**, the menu contains:
   ```
   (1) View Teaching Schedule
   (2) Take Attendance
@@ -86,7 +85,7 @@ Student Attendance System – CLI Version
   (4) Generate Attendance Report
   (0) Logout
   ```
-- Nếu đăng nhập là **Admin**, vào menu:
+- If logged in as an **Admin**, the menu contains:
   ```
   (1) Manage Users
   (2) Manage Courses
@@ -98,22 +97,22 @@ Student Attendance System – CLI Version
 
 ---
 
-## 🧩 4. Các chức năng chính
+## 🧩 4. Main features
 
-| Nhóm chức năng | Mô tả |
-|----------------|-------|
-| **1. Authentication** | Đăng ký và đăng nhập người dùng (Student, Lecturer, Admin). |
-| **2. Timetable Management** | Sinh viên xem thời khóa biểu, dữ liệu lấy từ `sessions.txt`. |
-| **3. Attendance Management** | Sinh viên tự điểm danh, giảng viên điểm danh lớp, xem lịch sử. |
-| **4. Correction Handling** | Sinh viên gửi yêu cầu sửa điểm danh; giảng viên duyệt. |
-| **5. Attendance Reporting** | Giảng viên / Admin tạo báo cáo điểm danh. |
-| **6. Administration** | Admin quản lý Users, Courses, Classes. |
+| Feature group | Description |
+|---------------|-------------|
+| **1. Authentication** | User registration and login (Student, Lecturer, Admin). |
+| **2. Timetable Management** | Students can view timetables; data comes from `sessions.txt`. |
+| **3. Attendance Management** | Students can check in; lecturers can take attendance and view history. |
+| **4. Correction Handling** | Students can request attendance corrections; lecturers can review requests. |
+| **5. Attendance Reporting** | Lecturers / Admin can generate attendance reports. |
+| **6. Administration** | Admin manages users, courses, and classes. |
 
 ---
 
-## 📚 5. Dữ liệu mẫu (trong thư mục `/data/`)
+## 📚 5. Sample data (in `/data/`)
 
-| File | Dữ liệu mẫu |
+| File | Sample entry |
 |------|--------------|
 | `users.txt` | `U001,Nguyen Van A,student01@gmail.com,123456,student` |
 | `courses.txt` | `C001,Python Programming,3` |
@@ -125,45 +124,44 @@ Student Attendance System – CLI Version
 
 ---
 
-## 🧪 6. Kiểm thử
+## 🧪 6. Testing
 
-Chạy tất cả các test:
+Run all tests:
 ```bash
 pytest -v
 ```
 
-Hoặc chạy riêng 1 module:
+Or run a single test module:
 ```bash
 pytest tests/test_attendance.py -v
 ```
 
+---
+
+## 👥 7. Team responsibilities
+
+| Member | Primary responsibility | Focus |
+|--------|----------------------|-------|
+| **Bảo** | Authentication + CLI routing | Registration, login, dashboard navigation |
+| **Bình** | Academic domain | Handling Course, Class, Session data used by attendance features |
+| **Tuấn** | Attendance Management | Check-in, Take Attendance, View Attendance History |
+| **Kiệt** | Correction & Reporting | Request/Approve Correction, Generate Reports, basic Admin CRUD |
 
 ---
 
-## 👥 7. Phân công nhóm
-
-| Thành viên | Phụ trách chính | Trọng tâm |
-|-------------|-----------------|------------|
-| **Bảo** | Authentication + CLI routing | Đăng ký, đăng nhập, điều hướng dashboard |
-| **Bình** | Academic domain | Xử lý Course, Class, Session, cung cấp dữ liệu cho điểm danh |
-| **Tuấn** | Attendance Management | Check-in Attendance, Take Attendance, View Attendance History |
-| **Kiệt** | Correction & Reporting | Request/Approve Correction, Generate Report, Admin CRUD cơ bản |
-
----
-
-## 🧰 8. Công cụ phát triển
-- **IDE:** Visual Studio Code / PyCharm  
-- **Version control:** GitHub  
-- **Diagram tool:** Draw.io  
-- **Testing tool:** pytest + Excel test cases  
+## 🧰 8. Development tools
+- **IDE:** Visual Studio Code / PyCharm
+- **Version control:** GitHub
+- **Diagram tool:** Draw.io
+- **Testing tool:** pytest
 - **Optional:** Docker
 
 ---
 
-## 🏁 9. Ghi chú
-- Dữ liệu nằm trong thư mục `data/`, phải tồn tại trước khi chạy.  
-- Có thể thêm code khởi tạo file trống nếu chưa có dữ liệu.  
-- Nếu dùng Docker, lệnh mặc định:
+## 🏁 9. Notes
+- Data files are stored in the `data/` folder and should exist before running the app.
+- You can add initialization code to create empty files if they are missing.
+- To run via Docker or directly, the entry command is:
   ```bash
   python main.py
   ```
