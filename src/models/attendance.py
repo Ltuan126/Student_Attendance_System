@@ -9,6 +9,10 @@ This version keeps things intentionally minimal:
 
 from enum import Enum
 from typing import Optional
+from datetime import datetime
+
+
+TIME_FMT = "%Y-%m-%d %H:%M"
 
 
 class AttendanceState(Enum):
@@ -29,7 +33,7 @@ class AttendanceRecord:
 		record_id: str,
 		student_id: str,
 		session_id: str,
-		check_in_time: str = "",
+		check_in_time: Optional[datetime] = None,
 		state: AttendanceState = AttendanceState.ABSENT,
 		note: Optional[str] = None,
 	):
@@ -41,10 +45,14 @@ class AttendanceRecord:
 		self.note = note
 
 	def to_line(self) -> str:
-		"""Serialize to a simple CSV line. Replace commas in note with semicolons."""
+		"""Serialize to a simple CSV line. Replace commas in note with semicolons.
+
+		check_in_time is formatted using TIME_FMT if present, otherwise left empty.
+		"""
 		note_part = (self.note or "")
 		note_part = note_part.replace("\n", " ").replace(",", ";")
-		return f"{self.record_id},{self.student_id},{self.session_id},{self.check_in_time},{self.state.value},{note_part}"
+		time_str = self.check_in_time.strftime(TIME_FMT) if self.check_in_time else ""
+		return f"{self.record_id},{self.student_id},{self.session_id},{time_str},{self.state.value},{note_part}"
 
 	@classmethod
 	def from_line(cls, line: str) -> "AttendanceRecord":
@@ -55,7 +63,17 @@ class AttendanceRecord:
 		parts = line.rstrip("\n").split(",")
 		# ensure at least 6 elements (pad missing with empty strings)
 		parts += [""] * (6 - len(parts))
-		record_id, student_id, session_id, check_in_time, state_str, note = [p.strip() for p in parts[:6]]
+		record_id, student_id, session_id, time_str, state_str, note = [p.strip() for p in parts[:6]]
+
+		# parse time_str into datetime or None
+		if time_str:
+			try:
+				check_in_time = datetime.strptime(time_str, TIME_FMT)
+			except ValueError:
+				# lenient: try isoformat
+				check_in_time = datetime.fromisoformat(time_str)
+		else:
+			check_in_time = None
 
 		# map state_str to AttendanceState (case-insensitive)
 		state = AttendanceState.ABSENT
