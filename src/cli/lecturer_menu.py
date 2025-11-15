@@ -11,7 +11,6 @@ except Exception:
 
 
 def handle_view_teaching_schedule(current_user):
-    """Display the lecturer's teaching schedule."""
     print("\n" + "="*80)
     print("--- LICH GIANG DAY CUA BAN ---")
     print("="*80)
