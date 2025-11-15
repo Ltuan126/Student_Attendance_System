@@ -2,8 +2,14 @@ import os
 from datetime import datetime, timedelta
 from typing import List, Optional
 
-from src.models.attendance import AttendanceRecord, AttendanceState, TIME_FMT
-from src.services.timetable_service import get_session_by_id
+try:
+    # package-style imports when running `python -m src.main`
+    from src.models.attendance import AttendanceRecord, AttendanceState, TIME_FMT
+    from src.services.timetable_service import get_session_by_id, get_students_in_session
+except Exception:
+    # script-style imports when running `python main.py` from inside src/
+    from models.attendance import AttendanceRecord, AttendanceState, TIME_FMT
+    from services.timetable_service import get_session_by_id, get_students_in_session
 
 
 def _data_path(filename: str) -> str:
@@ -30,21 +36,35 @@ def _next_record_id() -> str:
         return "A001"
 
 
-def student_checkin(student_id: str, session_id: str) -> bool:
+def student_checkin(student_id: str, session_id: str) -> tuple[bool, str]:
     """Student checks in for a session.
 
     Logic (simple):
     - call get_session_by_id(session_id)
     - ensure session exists and status == 'Open'
+    - check if student already checked in for this session (prevent duplicates)
     - compare now with session start: within 15 minutes => PRESENT else LATE
     - append record to attendance.txt
     - return True on success, False on failure
     """
     sess = get_session_by_id(session_id)
     if not sess:
-        return False
+        return False, f"Session {session_id} not found."
     if sess.get("status", "").lower() != "open":
-        return False
+        return False, f"Session {session_id} is not open for check-in."
+
+    # Check if student already checked in for this session
+    path = _data_path("attendance.txt")
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            for line in fh:
+                parts = line.strip().split(",")
+                if len(parts) >= 3:
+                    _, sid, sess_id = parts[0], parts[1], parts[2]
+                    if sid == student_id and sess_id == session_id:
+                        return False, "You have already checked in for this session."
+    except FileNotFoundError:
+        pass  # File doesn't exist yet, first record
 
     now = datetime.now()
     start: datetime = sess["start_datetime"]
@@ -57,12 +77,11 @@ def student_checkin(student_id: str, session_id: str) -> bool:
     rid = _next_record_id()
     record = AttendanceRecord(rid, student_id, session_id, now, state, None)
 
-    path = _data_path("attendance.txt")
     line = record.to_line()
     with open(path, "a", encoding="utf-8") as fh:
         fh.write(line + "\n")
 
-    return True
+    return True, f"Checked in as {state.value}."
 
 
 def lecturer_take_attendance(session_id: str) -> None:
@@ -73,8 +92,6 @@ def lecturer_take_attendance(session_id: str) -> None:
     - for each student prompt the lecturer to enter P/L/A (default P)
     - write all entered records to attendance.txt
     """
-    from src.services.timetable_service import get_students_in_session
-
     sess = get_session_by_id(session_id)
     if not sess or sess.get("status", "").lower() != "open":
         print(f"Session {session_id} not found or not open")
@@ -100,18 +117,43 @@ def lecturer_take_attendance(session_id: str) -> None:
     # append all records
     path = _data_path("attendance.txt")
     start: datetime = sess["start_datetime"]
+
+    # Read all existing records first to get the max ID
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            max_num = 0
+            for line in fh:
+                parts = line.strip().split(",")
+                if not parts:
+                    continue
+                rid = parts[0]
+                if rid.startswith("A") and rid[1:].isdigit():
+                    num = int(rid[1:])
+                    if num > max_num:
+                        max_num = num
+            next_id_num = max_num + 1
+    except FileNotFoundError:
+        next_id_num = 1
+
+    # Now write all records with sequential IDs
     with open(path, "a", encoding="utf-8") as fh:
         for sid, resp in answers:
             state = AttendanceState.PRESENT if resp == "P" else AttendanceState.LATE if resp == "L" else AttendanceState.ABSENT
-            rid = _next_record_id()
+            rid = f"A{next_id_num:03d}"
+            next_id_num += 1
             rec = AttendanceRecord(rid, sid, session_id, start if resp != "A" else None, state, None)
             fh.write(rec.to_line() + "\n")
 
 
-def get_student_history(student_id: str) -> List[AttendanceRecord]:
-    """Return list of AttendanceRecord objects for the student (all records).
+def get_student_history(student_id: str) -> tuple[List[AttendanceRecord], dict]:
+    """Return attendance records and stats for the student.
 
     Reads attendance.txt and parses lines with AttendanceRecord.from_line.
+
+    Returns:
+        tuple: (records, stats) where:
+            - records: List of AttendanceRecord objects
+            - stats: dict with keys: total, present, late, absent, attendance_pct
     """
     path = _data_path("attendance.txt")
     out: List[AttendanceRecord] = []
@@ -128,7 +170,7 @@ def get_student_history(student_id: str) -> List[AttendanceRecord]:
                 if rec.student_id == student_id:
                     out.append(rec)
     except FileNotFoundError:
-        return []
+        return [], {"total": 0, "present": 0, "late": 0, "absent": 0, "attendance_pct": 0.0}
     # compute stats
     total = len(out)
     present = sum(1 for r in out if r.state == AttendanceState.PRESENT)
