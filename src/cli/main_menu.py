@@ -1,4 +1,3 @@
-
 from services.auth_service import register_user, login_user
 from cli.student_menu import student_menu
 from cli.lecturer_menu import lecturer_menu

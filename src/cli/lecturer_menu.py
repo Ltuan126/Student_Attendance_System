@@ -1,13 +1,6 @@
-try:
-    # When running as package (python -m src.main)
-    from src.services.timetable_service import load_sessions, load_classes, load_courses, get_students_in_session
-    from src.services.attendance_service import lecturer_take_attendance, get_student_history
-    from src.services.correction_service import CorrectionService
-except Exception:
-    # When running as script from inside src/ (python main.py)
-    from services.timetable_service import load_sessions, load_classes, load_courses, get_students_in_session
-    from services.attendance_service import lecturer_take_attendance, get_student_history
-    from services.correction_service import CorrectionService
+from services.timetable_service import load_sessions, load_classes, load_courses, get_students_in_session
+from services.attendance_service import lecturer_take_attendance, get_student_history
+from services.correction_service import CorrectionService
 
 
 def handle_view_teaching_schedule(current_user):

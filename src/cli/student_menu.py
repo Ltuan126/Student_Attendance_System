@@ -1,4 +1,3 @@
-
 from services.timetable_service import get_student_timetable, load_courses, load_classes, get_session_by_id
 from services.attendance_service import student_checkin, get_student_history
 from services.correction_service import CorrectionService
