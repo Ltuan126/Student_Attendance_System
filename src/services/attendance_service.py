@@ -37,16 +37,6 @@ def _next_record_id() -> str:
 
 
 def student_checkin(student_id: str, session_id: str) -> tuple[bool, str]:
-    """Student checks in for a session.
-
-    Logic (simple):
-    - call get_session_by_id(session_id)
-    - ensure session exists and status == 'Open'
-    - check if student already checked in for this session (prevent duplicates)
-    - compare now with session start: within 15 minutes => PRESENT else LATE
-    - append record to attendance.txt
-    - return True on success, False on failure
-    """
     sess = get_session_by_id(session_id)
     if not sess:
         return False, f"Session {session_id} not found."
@@ -85,13 +75,6 @@ def student_checkin(student_id: str, session_id: str) -> tuple[bool, str]:
 
 
 def lecturer_take_attendance(session_id: str) -> None:
-    """Lecturer takes attendance for a session.
-
-    Behavior:
-    - get list of (student_id, name) via get_students_in_session
-    - for each student prompt the lecturer to enter P/L/A (default P)
-    - write all entered records to attendance.txt
-    """
     sess = get_session_by_id(session_id)
     if not sess or sess.get("status", "").lower() != "open":
         print(f"Session {session_id} not found or not open")
@@ -146,15 +129,6 @@ def lecturer_take_attendance(session_id: str) -> None:
 
 
 def get_student_history(student_id: str) -> tuple[List[AttendanceRecord], dict]:
-    """Return attendance records and stats for the student.
-
-    Reads attendance.txt and parses lines with AttendanceRecord.from_line.
-
-    Returns:
-        tuple: (records, stats) where:
-            - records: List of AttendanceRecord objects
-            - stats: dict with keys: total, present, late, absent, attendance_pct
-    """
     path = _data_path("attendance.txt")
     out: List[AttendanceRecord] = []
     try:
