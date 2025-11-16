@@ -2,8 +2,6 @@ from pathlib import Path
 from typing import List, Optional
 from models.correction import CorrectionRequest, CorrectionStatus
 
-
-
 class CorrectionService:
     CORRECTIONS_FILE = Path("data/corrections.txt")
     
