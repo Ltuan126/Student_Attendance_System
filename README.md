@@ -95,6 +95,18 @@ Student Attendance System – CLI Version
   (0) Logout
   ```
 
+### Docker
+
+Build the CLI image (context is the project root):
+```bash
+docker build -t sas-cli .
+```
+
+Run the CLI inside a disposable container:
+```bash
+docker run -it --rm sas-cli
+```
+
 ---
 
 ## 🧩 4. Main features
