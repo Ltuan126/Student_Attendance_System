@@ -13,7 +13,10 @@ def load_users():
 
     with open(USERS_FILE, "r") as f:
         for line in f:
-            user_id, name, email, password, role = line.strip().split(",")
+            line = line.strip()
+            if not line:  # Skip empty lines
+                continue
+            user_id, name, email, password, role = line.split(",")
             if role == "student":
                 users.append(Student(user_id, name, email, password))
             elif role == "lecturer":
@@ -55,15 +58,24 @@ def register_user():
     print("3. Admin")
     role_choice = input("Nhập số: ").strip()
 
+    # Generate new user ID (same logic as admin_service.py)
+    max_id = 0
+    for u in users:
+        if u.id.startswith("U") and u.id[1:].isdigit():
+            num = int(u.id[1:])
+            if num > max_id:
+                max_id = num
+    new_id = f"U{max_id + 1:03d}"
+
     if role_choice == "1":
         role = "student"
-        new_user = Student(len(users)+1, name, email, password)
+        new_user = Student(new_id, name, email, password)
     elif role_choice == "2":
         role = "lecturer"
-        new_user = Lecturer(len(users)+1, name, email, password)
+        new_user = Lecturer(new_id, name, email, password)
     elif role_choice == "3":
         role = "admin"
-        new_user = Admin(len(users)+1, name, email, password)
+        new_user = Admin(new_id, name, email, password)
     else:
         print("Lựa chọn không hợp lệ .")
         return
