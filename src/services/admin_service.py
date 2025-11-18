@@ -263,49 +263,6 @@ def delete_class(class_id: str) -> bool:
 
 
 # ============================================================================
-# ROSTER IMPORT (BASIC)
-# ============================================================================
-
-def import_roster_from_file(file_path: str) -> bool:
-    """Import student roster from CSV file to class_student.txt.
-
-    Expected format: class_id,student_id
-    """
-    if not os.path.exists(file_path):
-        print(f"[ERROR] File not found: {file_path}")
-        return False
-
-    cs_path = _data_path("class_student.txt")
-
-    try:
-        # Read existing entries
-        existing = set()
-        if os.path.exists(cs_path):
-            with open(cs_path, "r", encoding="utf-8") as f:
-                for line in f:
-                    existing.add(line.strip())
-
-        # Read new entries from import file
-        new_count = 0
-        with open(file_path, "r", encoding="utf-8") as import_file:
-            with open(cs_path, "a", encoding="utf-8") as cs_file:
-                for line in import_file:
-                    line = line.strip()
-                    if not line or line in existing:
-                        continue
-                    parts = line.split(",")
-                    if len(parts) >= 2:
-                        cs_file.write(f"{parts[0].strip()},{parts[1].strip()}\n")
-                        new_count += 1
-
-        print(f"[OK] Imported {new_count} new roster entries.")
-        return True
-    except Exception as e:
-        print(f"[ERROR] Failed to import roster: {e}")
-        return False
-
-
-# ============================================================================
 # SYSTEM REPORTS
 # ============================================================================
 

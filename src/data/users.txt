@@ -1,3 +1,6 @@
 U001,Nguyen Van A,student01@gmail.com,123456,student
 U002,Tran Thi B,lecturer01@gmail.com,abc123,lecturer
 U003,Admin,admin@system.com,admin,admin
+U004,Tuan,student02@gmail.com,112233,student
+U005,Binh,lecturer02@gmail.com,abc456,lecturer
+U006,Kiet,admin02@system.com,admin02,admin

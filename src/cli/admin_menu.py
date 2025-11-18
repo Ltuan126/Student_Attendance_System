@@ -2,7 +2,7 @@ from services.admin_service import (
     list_users, add_user, delete_user,
     list_courses, add_course, delete_course,
     list_classes, add_class, delete_class,
-    import_roster_from_file, get_system_statistics
+    get_system_statistics
 )
 
 
@@ -238,29 +238,6 @@ def handle_manage_classes():
             print("[ERROR] Lua chon khong hop le.")
 
 
-def handle_import_roster():
-    """Import student roster from CSV file."""
-    print("\n" + "="*80)
-    print("--- IMPORT DANH SACH SINH VIEN ---")
-    print("="*80)
-    print("\nDinh dang file: class_id,student_id")
-    print("Vi du: CL001,U001")
-    print("-" * 80)
-
-    file_path = input("\nNhap duong dan file CSV (hoac Enter de huy): ").strip()
-    if not file_path:
-        print("Huy thao tac.")
-        input("\nNhan Enter de tiep tuc...")
-        return
-
-    if import_roster_from_file(file_path):
-        print("\n[OK] Import thanh cong!")
-    else:
-        print("\n[ERROR] Import that bai.")
-
-    input("\nNhan Enter de tiep tuc...")
-
-
 def handle_view_system_reports():
     """View system statistics."""
     print("\n" + "="*80)
@@ -291,8 +268,7 @@ def admin_menu(current_user):
         print("(1) Quan ly nguoi dung")
         print("(2) Quan ly mon hoc")
         print("(3) Quan ly lop hoc")
-        print("(4) Import danh sach sinh vien")
-        print("(5) Xem bao cao he thong")
+        print("(4) Xem bao cao he thong")
         print("(0) Dang xuat")
         print("="*80)
 
@@ -305,8 +281,6 @@ def admin_menu(current_user):
         elif choice == '3':
             handle_manage_classes()
         elif choice == '4':
-            handle_import_roster()
-        elif choice == '5':
             handle_view_system_reports()
         elif choice == '0':
             print("\n[OK] Dang xuat thanh cong.")
